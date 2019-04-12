@@ -28,10 +28,7 @@ class InviteList(APIView):
 
 class AdminInviteList(APIView):
     def get(self, request, format=None):
-        approved = False
-        if request.query_params.get('approved', None) == 'true':
-            approved = True
-
+        approved = request.query_params.get('approved', 'false') == 'true'
         invites = Invite.objects.filter(approved=approved)
         serializer = InviteSerializer(invites, many=True)
         return JsonResponse(serializer.data, safe=False)
