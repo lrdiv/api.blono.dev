@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
 from ..models import Invite
@@ -9,6 +10,8 @@ from ..serializers import InviteSerializer
 
 
 class InviteList(APIView):
+    permission_classes = (AllowAny,)
+
     def post(self, request, format=None):
         invite = Invite.objects.filter(
             email_address=request.data['email_address']).first()
@@ -24,22 +27,3 @@ class InviteList(APIView):
             return JsonResponse(serializer.data, safe=False)
 
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AdminInviteList(APIView):
-    def get(self, request, format=None):
-        approved = request.query_params.get('approved', 'false') == 'true'
-        invites = Invite.objects.filter(approved=approved)
-        serializer = InviteSerializer(invites, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-
-class AdminInviteDetail(APIView):
-    def put(self, request, pk, format=None):
-        invite = Invite.objects.get(pk=pk)
-        serializer = InviteSerializer(invite, data=request.data)
-
-        if serializer.is_valid() and serializer.save():
-            return JsonResponse(serializer.data, safe=False)
-
-        return JsonResponse(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
