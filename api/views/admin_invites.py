@@ -1,15 +1,14 @@
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from ..models import Invite
 from ..serializers import InviteSerializer
+from ..tasks import send_slack_invite
 
 
 class AdminInviteList(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
         approved = request.query_params.get('approved', 'false') == 'true'
         invites = Invite.objects.filter(approved=approved)
         serializer = InviteSerializer(invites, many=True)
@@ -17,11 +16,12 @@ class AdminInviteList(APIView):
 
 
 class AdminInviteDetail(APIView):
-    def put(self, request, pk, format=None):
-        invite = Invite.objects.get(pk=pk)
+    def put(self, request, primary_key):
+        invite = Invite.objects.get(pk=primary_key)
         serializer = InviteSerializer(invite, data=request.data)
 
-        if serializer.is_valid() and serializer.save():
-            return JsonResponse(serializer.data, safe=False)
+        if not serializer.is_valid() or not serializer.save():
+            return JsonResponse(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return JsonResponse(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        send_slack_invite.delay(primary_key)
+        return JsonResponse(serializer.data, safe=False)
