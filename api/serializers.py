@@ -10,7 +10,7 @@ class InviteSerializer(serializers.Serializer):
     full_name = serializers.CharField(max_length=200)
     approved = serializers.BooleanField(default=False)
     approved_at = serializers.DateTimeField(default=None, required=False, read_only=True)
-    requested_at = serializers.DateTimeField(default=None, required=False)
+    requested_at = serializers.DateTimeField(default=timezone.now, required=False)
     already_requested = serializers.BooleanField(default=False, required=False, read_only=True)
     slack_activated = serializers.BooleanField(default=False, required=False, read_only=True)
 

@@ -12,7 +12,7 @@ from ..serializers import InviteSerializer
 class InviteList(APIView):
     permission_classes = (AllowAny,)
 
-    def post(self, request, format=None):
+    def post(self, request):
         invite = Invite.objects.filter(
             email_address=request.data['email_address']).first()
 

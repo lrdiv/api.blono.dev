@@ -1,3 +1,5 @@
+import django_heroku
+
 """
 Django settings for blono_dev_server project.
 
@@ -147,3 +149,5 @@ STATIC_URL = '/static/'
 APPEND_SLASH = False
 
 SLACK_API_TOKEN = os.environ.get('SLACK_API_TOKEN')
+
+django_heroku.settings(locals())
