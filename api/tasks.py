@@ -3,8 +3,8 @@ import os
 
 from celery import shared_task
 from slackclient import SlackClient
-from blono_dev_server import settings
 from .models import Invite
+
 
 @shared_task
 def send_slack_invite(invite_pk):
