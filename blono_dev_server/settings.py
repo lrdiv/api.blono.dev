@@ -120,6 +120,7 @@ CORS_ORIGIN_WHITELIST = (
     os.environ.get('FRONTEND_DOMAIN')
 )
 
+BROKER_URL = os.environ.get('REDIS_URL')
 CELERY_BROKER_URL = os.environ.get('REDIS_URL')
 CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['application/json']
