@@ -1,5 +1,5 @@
-import django_heroku
 import os
+import django_heroku
 
 """
 Django settings for blono_dev_server project.
@@ -113,6 +113,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
     )
 }
 
